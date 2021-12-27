@@ -521,7 +521,7 @@ class ElFinderConnector(object):
         options = dict([(k, v) for k, v in self.data.items() if k not in
                         ['target', 'cmd']])
         options.update(kwargs)
-        self.response['changed'] = [volume.resize(target, **options)]
+        self.response.update(volume.resize(target, **options))
 
     def __duplicate(self):
         """Duplicate files and dirs"""
