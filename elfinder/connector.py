@@ -91,7 +91,7 @@ class ElFinderConnector(object):
             'resize': {
                 'method': '__resize',
                 'options': ['target', 'mode', 'width', 'height',  'quality'],
-                'defaults': {'x': 0, 'y': 0, 'degree': None}
+                'defaults': {'x': 0, 'y': 0, 'degree': 0}
             },
             'duplicate': {'method': '__duplicate', 'options': ['targets[]']},
             'extract': {'method': '__extract', 'options': ['target']},
