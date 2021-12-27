@@ -88,6 +88,11 @@ class ElFinderConnector(object):
                      'overwrite': True}
                  },
             ],
+            'resize': {
+                'method': '__resize',
+                'options': ['target', 'mode', 'width', 'height',  'quality'],
+                'defaults': {'x': 0, 'y': 0, 'degree': None}
+            },
             'duplicate': {'method': '__duplicate', 'options': ['targets[]']},
             'extract': {'method': '__extract', 'options': ['target']},
             'archive': {'method': '__archive',
@@ -123,7 +128,7 @@ class ElFinderConnector(object):
                        'current', 'tree', 'name', 'content', 'encoding', 'src',
                        'dst', 'cut', 'init', 'type', 'width', 'height',
                        'q', 'download', 'suffix', 'overwrite', 'chunk',
-                       'cid', 'range', 'conv']
+                       'mode', 'degree', 'quality', 'bg', 'cid', 'range', 'conv']
         return http_params + self.allowed_list_command_http_params
 
     @cached_property
@@ -508,6 +513,15 @@ class ElFinderConnector(object):
         files = self.data['upload[]']
         data = volume.upload_chunked_req(files, parent, chunk, **kwargs)
         self.response.update(data)
+
+    def __resize(self, **kwargs):
+        """Change the size of an image"""
+        target = self.data['target']
+        volume = self.get_volume(target)
+        options = dict([(k, v) for k, v in self.data.items() if k not in
+                        ['target', 'cmd']])
+        options.update(kwargs)
+        self.response['changed'] = [volume.resize(target, **options)]
 
     def __duplicate(self):
         """Duplicate files and dirs"""

@@ -223,6 +223,23 @@ class BaseVolumeDriver(object):
             :returns: TODO
         """
 
+    def resize(self, target, **kwargs):
+        """ Change the size of an image.
+
+            :param target: The hash of the target file/directory.
+            :kwargs: dict --
+                cmd : resize
+                mode : 'resize' or 'crop' or 'rotate'
+                target : hash of the image path
+                width : new image width
+                height : new image height
+                x : x of crop (mode='crop')
+                y : y of crop (mode='crop')
+                degree : rotate degree (mode='rotate')
+                quality
+        """
+        raise NotImplementedError
+
     def upload_chunked(self, files, target, cid, chunk, bytes_range):
         """
         Chunking arguments:
