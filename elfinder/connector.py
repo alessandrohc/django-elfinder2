@@ -189,6 +189,17 @@ class ElFinderConnector(object):
                 defaults[field] = method(self.data[field])
         return defaults
 
+    def _filter_allowed_http_params(self, options):
+        """Filters the parameters allowed by the api"""
+        data = {}
+        for field in self.allowed_http_params:
+            if field in options:
+                if field in self.allowed_list_command_http_params:
+                    data[field] = options.getlist(field)
+                else:
+                    data[field] = options[field]
+        return data
+
     def run(self, request):
         """ Main entry point for running commands. Attemps to run a command
             function based on info in request.GET.
@@ -207,12 +218,7 @@ class ElFinderConnector(object):
         options = request.GET if request.method == "GET" else request.POST
 
         # Copy allowed parameters from the given request's GET to self.data
-        for field in self.allowed_http_params:
-            if field in options:
-                if field in self.allowed_list_command_http_params:
-                    self.data[field] = options.getlist(field)
-                else:
-                    self.data[field] = options[field]
+        self.data = self._filter_allowed_http_params(options)
 
         # If a valid command has been specified, try and run it. Otherwise set
         # the relevant error message.
