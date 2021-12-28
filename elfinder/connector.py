@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class ElFinderConnector(object):
-    _version = '2.157'
+    _version = '2.159'
 
     def __init__(self, volumes=None):
         if volumes is None:
