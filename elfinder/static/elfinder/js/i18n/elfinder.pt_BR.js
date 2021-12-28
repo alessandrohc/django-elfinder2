@@ -4,7 +4,7 @@
  * @author Wesley Osorio<wesleyfosorio@hotmail.com>
  * @author Fernando H. Bandeira <fernando.bandeira94@gmail.com>
  * @author Gustavo Brito <britopereiragustavo@gmail.com>
- * @version 2019-10-23
+ * @version 2019-10-22
  */
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -19,9 +19,9 @@
 		translator : 'Leandro Carvalho &lt;contato@leandrowebdev.net&gt;, Wesley Osorio&lt;wesleyfosorio@hotmail.com&gt;, Fernando H. Bandeira &lt;fernando.bandeira94@gmail.com&gt;, Gustavo Brito &lt;britopereiragustavo@gmail.com&gt;',
 		language   : 'Português',
 		direction  : 'ltr',
-		dateFormat : 'd M Y H:i', // will show like: 23 Out 2019 10:08
-		fancyDateFormat : '$1 H:i', // will show like: Hoje 10:08
-		nonameDateFormat : 'ymd-His', // noname upload will show like: 191023-100840
+		dateFormat : 'd M Y H:i', // will show like: 22 Out 2019 11:34
+		fancyDateFormat : '$1 H:i', // will show like: Hoje 11:34
+		nonameDateFormat : 'ymd-His', // noname upload will show like: 191022-113433
 		messages   : {
 
 			/********************************** errors **********************************/
@@ -180,7 +180,7 @@
 			'btnApprove': 'Vá para $1 & aprove', // from v2.1 added 26.04.2012
 			'btnUnmount': 'Desmontar', // from v2.1 added 30.04.2012
 			'btnConv'   : 'Converter', // from v2.1 added 08.04.2014
-			'btnCwd'    : 'Nesta pasta',      // from v2.1 added 22.5.2015
+			'btnCwd'    : 'Aqui',      // from v2.1 added 22.5.2015
 			'btnVolume' : 'Volume',    // from v2.1 added 22.5.2015
 			'btnAll'    : 'Todos',       // from v2.1 added 22.5.2015
 			'btnMime'   : 'Tipo MIME', // from v2.1 added 22.5.2015
@@ -578,4 +578,3 @@
 		}
 	};
 }));
-
