@@ -57,7 +57,7 @@ class ElFinderConnector(object):
                 'defaults': {'mimes[]': []}
             },
             'file': {'method': '__file', 'options': ['target'],
-                    'defaults': {'download': False, 'cpath': None, "reqiq": None}
+                    'defaults': {'download': False, 'cpath': None, "reqid": None}
                      },
             'parents': {
                 'method': '__parents', 'options': ['target'],
