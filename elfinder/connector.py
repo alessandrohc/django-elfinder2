@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 class ElFinderConnector(object):
-    _version = '2.159'
+    _api_version = 2.1
+    _api_revision = 59
 
     def __init__(self, volumes=None):
         if volumes is None:
@@ -119,7 +120,7 @@ class ElFinderConnector(object):
             The returned dict will be merged with response during the __open
             command.
         """
-        return {'api': self._version}
+        return {'api': "%.1F%03d" % (self._api_version, self._api_revision)}
 
     def get_allowed_lcommand_http_params(self):
         return ["targets[]", "dirs[]",
