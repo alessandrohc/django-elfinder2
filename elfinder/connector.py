@@ -88,6 +88,10 @@ class ElFinderConnector(object):
                      'overwrite': True}
                  },
             ],
+            'dim': {
+                'method': '__dim',
+                'options': ['target', 'substitute'],
+            },
             'resize': {
                 'method': '__resize',
                 'options': ['target', 'mode', 'width', 'height',  'quality'],
@@ -128,7 +132,8 @@ class ElFinderConnector(object):
                        'current', 'tree', 'name', 'content', 'encoding', 'src',
                        'dst', 'cut', 'init', 'type', 'width', 'height',
                        'q', 'download', 'suffix', 'overwrite', 'chunk',
-                       'mode', 'degree', 'quality', 'bg', 'cid', 'range', 'conv']
+                       'mode', 'degree', 'quality', 'bg', 'substitute',
+                       'cid', 'range', 'conv']
         return http_params + self.allowed_list_command_http_params
 
     @cached_property
@@ -513,6 +518,11 @@ class ElFinderConnector(object):
         files = self.data['upload[]']
         data = volume.upload_chunked_req(files, parent, chunk, **kwargs)
         self.response.update(data)
+
+    def __dim(self, **kwargs):
+        target = self.data['target']
+        volume = self.get_volume(target)
+        self.response.update(volume.dim(target, **kwargs))
 
     def __resize(self, **kwargs):
         """Change the size of an image"""

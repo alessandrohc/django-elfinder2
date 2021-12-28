@@ -223,6 +223,19 @@ class BaseVolumeDriver(object):
             :returns: TODO
         """
 
+    def dim(self, target, **kwargs):
+        """
+        Returns the dimensions of an image/video
+        Arguments:
+            cmd : dim
+            target : hash path of the node
+            substitute : pixel that requests substitute image (optional) - API >= 2.1030
+        Response:
+            dim: The dimensions of the media in the format {width}x{height} (e.g. "640x480").
+            url: The URL of requested substitute image. (optional)
+        """
+        raise NotImplementedError
+
     def resize(self, target, **kwargs):
         """ Change the size of an image.
 
