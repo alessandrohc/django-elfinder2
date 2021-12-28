@@ -94,7 +94,7 @@ class BaseVolumeDriver(object):
         """
         raise NotImplementedError
 
-    def read_file_view(self, request, hash):
+    def read_file_view(self, request, hash, **kwargs):
         """ Django view function, used to display files in response to the
             'file' command.
 
@@ -260,9 +260,12 @@ class BaseVolumeDriver(object):
         cid : unique id of chunked uploading file
         range : Bytes range of file "Start byte,Chunk length,Total bytes
         """
+        pass
 
     def upload_chunked_req(self, files, parent, chunk):
         """Chunk merge request (When receive _chunkmerged, _name)"""
+        pass
 
     def abort(self, reqid):
         """Aborts an operation in progress."""
+        pass
