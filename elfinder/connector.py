@@ -55,7 +55,9 @@ class ElFinderConnector(object):
                 'method': '__tree', 'options': ['target'],
                 'defaults': {'mimes[]': []}
             },
-            'file': {'method': '__file', 'options': ['target']},
+            'file': {'method': '__file', 'options': ['target'],
+                    'defaults': {'download': False, 'cpath': None}
+                     },
             'parents': {
                 'method': '__parents', 'options': ['target'],
                 'defaults': {'mimes[]': []}
@@ -314,7 +316,7 @@ class ElFinderConnector(object):
         volume = self.get_volume(target)
         self.response['tree'] = volume.get_tree(target, **kwargs)
 
-    def __file(self):
+    def __file(self, **kwargs):
         """ Handles the 'file' command.
 
             Sets return_view, which will cause read_file_view to be rendered
@@ -326,7 +328,7 @@ class ElFinderConnector(object):
 
         # A file was requested, so set return_view to the read_file view.
         # self.return_view = self.read_file_view(self.request, volume, target)
-        self.return_view = volume.read_file_view(self.request, target)
+        self.return_view = volume.read_file_view(self.request, target, **kwargs)
         self.is_return_view = True
 
     def __open(self, **kwargs):
