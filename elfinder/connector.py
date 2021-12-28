@@ -135,7 +135,7 @@ class ElFinderConnector(object):
                        'current', 'tree', 'name', 'content', 'encoding', 'src',
                        'dst', 'cut', 'init', 'type', 'width', 'height',
                        'q', 'download', 'suffix', 'overwrite', 'chunk',
-                       'mode', 'degree', 'quality', 'bg', 'substitute',
+                       'mode', 'degree', 'quality', 'bg', 'x', 'y', 'substitute',
                        'cid', 'range', 'conv']
         return http_params + self.allowed_list_command_http_params
 
