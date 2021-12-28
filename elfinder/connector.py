@@ -57,7 +57,7 @@ class ElFinderConnector(object):
                 'defaults': {'mimes[]': []}
             },
             'file': {'method': '__file', 'options': ['target'],
-                    'defaults': {'download': False, 'cpath': None}
+                    'defaults': {'download': False, 'cpath': None, "reqiq": None}
                      },
             'parents': {
                 'method': '__parents', 'options': ['target'],
@@ -139,7 +139,7 @@ class ElFinderConnector(object):
                        'dst', 'cut', 'init', 'type', 'width', 'height',
                        'q', 'download', 'suffix', 'overwrite', 'chunk',
                        'mode', 'degree', 'quality', 'bg', 'x', 'y', 'substitute',
-                       'cid', 'range', 'conv']
+                       'cid', 'range', 'conv', 'cpath']
         return http_params + self.allowed_list_command_http_params
 
     @cached_property
