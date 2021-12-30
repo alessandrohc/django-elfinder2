@@ -93,7 +93,8 @@ class ElFinderConnector(object):
             ],
             'dim': {
                 'method': '__dim',
-                'options': ['target', 'substitute'],
+                'options': ['target'],
+                'defaults': {'substitute': None}
             },
             'resize': {
                 'method': '__resize',
