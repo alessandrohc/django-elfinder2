@@ -14,15 +14,8 @@ from django.utils.encoding import smart_text, smart_str, force_bytes
 from elfinder.conf import settings as elfinder_settings
 from elfinder.volume_drivers.base import BaseVolumeDriver
 
-try:
-    import urllib.parse as urllib
-except ImportError:
-    import urllib
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
+import urllib.parse as urllib
+import pathlib
 
 
 class FileExists(IOError):
