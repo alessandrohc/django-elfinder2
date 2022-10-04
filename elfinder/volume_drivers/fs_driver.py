@@ -10,7 +10,6 @@ from datetime import datetime
 from django.conf import settings
 from django.core.files import File
 from django.utils.encoding import smart_text, smart_str, force_bytes
-from django.utils.six import binary_type
 
 from elfinder.conf import settings as elfinder_settings
 from elfinder.volume_drivers.base import BaseVolumeDriver
@@ -59,7 +58,7 @@ class WrapperBase(object):
 
     @staticmethod
     def bytes_safe_decode(value, encoding='utf-8'):
-        if isinstance(value, binary_type):
+        if isinstance(value, bytes):
             spec = chardet.detect(value)
             encoding = spec.get('encoding', encoding) or encoding
             value = smart_text(value, encoding=encoding)

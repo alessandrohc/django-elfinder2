@@ -1,7 +1,7 @@
+# coding=utf-8
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.module_loading import import_string
-from django.utils.six import string_types
 
 
 class BaseVolumeDriver(object):
@@ -41,12 +41,12 @@ class BaseVolumeDriver(object):
 
     @cached_property
     def login_test_func(self):
-        test_func = self.kwargs.get('login_test_func')
-        if isinstance(test_func, string_types):
-            test_func = import_string(test_func)
+        func = self.kwargs.get('login_test_func')
+        if isinstance(func, str):
+            func = import_string(func)
         else:
-            test_func = lambda u: u.is_authenticated
-        return test_func
+            func = lambda u: u.is_authenticated
+        return func
 
     def get_options(self):
         """Volume config defaults"""
