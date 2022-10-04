@@ -1,4 +1,4 @@
-# econding=utf8
+# coding=utf8
 
 import os
 from distutils.command.build import build
