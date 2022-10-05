@@ -132,7 +132,7 @@ class ModelVolumeDriver(BaseVolumeDriver):
 
     def read_file_view(self, request, hash, **options):
         file = self.get_object(hash)
-        return render('elfinder/read_file.html', {'file': file},
+        return render(request, 'elfinder/read_file.html', {'file': file},
                       RequestContext(request))
 
     def mkdir(self, name, parent_hash):
