@@ -398,17 +398,18 @@ class ElFinderConnector(object):
         added, hashes = [], {}
         for dirname in self.data['dirs[]']:
             info = volume.mkdir(dirname, target)
-            hashes[info['hash']] = info
+            hashes[dirname] = info['hash']
             added.append(info)
-        self.response['added'] = added
         self.response['hashes'] = hashes
+        self.response['added'] = added
 
     def __mkfile(self):
         target = self.data['target']
         volume = self.get_volume(target)
-        info = volume.mkfile(self.data['name'], target)
+        dirname = self.data['name']
+        info = volume.mkfile(volume, target)
+        self.response['hashes'] = {dirname: info['hash']}
         self.response['added'] = [info]
-        self.response['hashes'] = {info['hash']: info}
 
     def __putfile(self, **kwargs):
         """updating an existing file."""
