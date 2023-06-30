@@ -80,7 +80,7 @@ class ElFinderConnector(object):
             'upload': [
                 {'method': '__upload',
                  'options': ['target'],
-                 'defaults': {'overwrite': True, 'suffix': '~', 'renames[]': []},
+                 'defaults': {'overwrite': True, 'suffix': '~', 'renames[]': [], 'upload_path[]': []},
                  'exclude': ['chunk', 'range', 'cid', 'upload[]']},
                 {'method': '__upload_chunked', 'options': ['target', 'range', 'chunk', 'cid']},
                 {'method': '__upload_chunked_req',
@@ -124,7 +124,7 @@ class ElFinderConnector(object):
         return {'api': "%.1F%03d" % (self._api_version, self._api_revision)}
 
     def get_allowed_lcommand_http_params(self):
-        return ["targets[]", "dirs[]",
+        return ["targets[]", "dirs[]", "upload_path[]",
                 "renames[]", "upload[]",
                 "mimes[]"]
 
