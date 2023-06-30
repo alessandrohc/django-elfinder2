@@ -65,7 +65,7 @@ class ElFinderConnector(object):
             },
             'mkdir': [
                 {'method': '__mkdir', 'options': ['target', 'name']},
-                {'method': '__mkdirs', 'options': ['target', 'dirs']},
+                {'method': '__mkdirs', 'options': ['target', 'dirs[]']},
             ],
             'mkfile': {'method': '__mkfile', 'options': ['target', 'name']},
             'put': {'method': '__putfile', 'options': ['target', 'content'],
@@ -395,15 +395,20 @@ class ElFinderConnector(object):
     def __mkdirs(self):
         target = self.data['target']
         volume = self.get_volume(target)
-        added = []
-        for dirname in self.data['dirs']:
-            added.append(volume.mkdir(dirname, target))
+        added, hashes = [], {}
+        for dirname in self.data['dirs[]']:
+            info = volume.mkdir(dirname, target)
+            hashes[info['hash']] = info
+            added.append(info)
         self.response['added'] = added
+        self.response['hashes'] = hashes
 
     def __mkfile(self):
         target = self.data['target']
         volume = self.get_volume(target)
-        self.response['added'] = [volume.mkfile(self.data['name'], target)]
+        info = volume.mkfile(self.data['name'], target)
+        self.response['added'] = [info]
+        self.response['hashes'] = {info['hash']: info}
 
     def __putfile(self, **kwargs):
         """updating an existing file."""
