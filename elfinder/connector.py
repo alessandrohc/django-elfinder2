@@ -73,8 +73,8 @@ class ElFinderConnector(object):
             'rename': {'method': '__rename', 'options': ['target', 'name']},
             'ls': {'method': '__list', 'options': ['target']},
             'paste': {'method': '__paste',
-                      'options': ['targets[]', 'dst', 'cut', 'suffix'],
-                      'defaults': {'renames[]': []}},
+                      'options': ['targets[]', 'dst', 'cut'],
+                      'defaults': {'renames[]': [], 'reqid': None, 'suffix': '~'}},
             'rm': {'method': '__remove', 'options': ['targets[]']},
             'size': {'method': '__size', 'options': ['targets[]']},
             'upload': [
