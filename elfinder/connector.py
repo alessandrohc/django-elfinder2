@@ -388,11 +388,16 @@ class ElFinderConnector(object):
             self.response.update(self.get_init_params())
 
     def __mkdir(self):
+        """make dir"""
         target = self.data['target']
         volume = self.get_volume(target)
-        self.response['added'] = [volume.mkdir(self.data['name'], target)]
+        dirname = self.data['name']
+        info = volume.mkdir(dirname, target)
+        self.response['hashes'] = {dirname: info['hash']}
+        self.response['added'] = [info]
 
     def __mkdirs(self):
+        """make dirs"""
         target = self.data['target']
         volume = self.get_volume(target)
         added, hashes = [], {}
@@ -404,12 +409,10 @@ class ElFinderConnector(object):
         self.response['added'] = added
 
     def __mkfile(self):
+        """make file"""
         target = self.data['target']
         volume = self.get_volume(target)
-        dirname = self.data['name']
-        info = volume.mkfile(volume, target)
-        self.response['hashes'] = {dirname: info['hash']}
-        self.response['added'] = [info]
+        self.response['added'] = [volume.mkfile(self.data['name'], target)]
 
     def __putfile(self, **kwargs):
         """updating an existing file."""
