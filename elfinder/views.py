@@ -14,13 +14,17 @@ from elfinder.volume_drivers import get_volume_driver
 
 
 class VolumeMixin:
+    # Whether to return responses in json (used with the connector).
     json_response = False
+    # Whether to check through the volume if login is required.
+    volume_login_check = True
 
     def dispatch(self, request, *args, **kwargs):
         self.volumes = self.get_volume_drivers(request, collection_id=kwargs.get('coll_id'))
-        for volume_driver in self.volumes:
-            if volume_driver.login_required and (login_view := self.get_login_view(request, volume_driver)):
-                return login_view
+        if self.volume_login_check:
+            for volume_driver in self.volumes:
+                if volume_driver.login_required and (login_view := self.get_login_view(request, volume_driver)):
+                    return login_view
         return super().dispatch(request, *args, **kwargs)
 
     def get_volume_drivers(self, request, **options) -> list:
