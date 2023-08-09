@@ -360,18 +360,15 @@ class ElFinderConnector(object):
             # No target was specified, which means the client is being opened
             # for the first time and requires information about all currently
             # opened volumes.
-
             # Assume the first volume's root is the currently open directory.
             volume = next(iter(self.volumes.values()))
             self.response.update(volume.get_options())
             self.response['cwd'] = volume.get_info('')
-
+            self.response['files'] = files = []
             # Add relevant tree information for each volume
             for volume_id in self.volumes:
                 volume = self.volumes[volume_id]
-                self.response['files'] = volume.get_tree('',
-                                                         inc_ancestors,
-                                                         inc_siblings, **kwargs)
+                files.extend(volume.get_tree('', inc_ancestors, inc_siblings, **kwargs))
         else:
             # A target was specified, so we only need to return info about
             # that directory.
