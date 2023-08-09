@@ -54,13 +54,18 @@ class BaseVolumeDriver(object):
     def login_url(self):
         return self.kwargs.get('login_url')
 
+    @staticmethod
+    def _login_test(user):
+        """Tests whether the user is active and authenticated"""
+        return user.is_active and user.is_authenticated
+
     @cached_property
     def login_test_func(self):
         func = self.kwargs.get('login_test_func')
         if isinstance(func, str):
             func = import_string(func)
         else:
-            func = lambda u: u.is_authenticated
+            func = self._login_test
         return func
 
     def get_options(self):
