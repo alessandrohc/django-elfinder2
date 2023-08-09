@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.module_loading import import_string
 from urllib.parse import urlencode
+from elfinder.conf import settings as elfinder_settings
+from django.utils.safestring import mark_safe
 
 
 class BaseVolumeDriver(object):
@@ -27,9 +29,20 @@ class BaseVolumeDriver(object):
             url = reverse(view_name, kwargs={'coll_id': collection_id})
         else:
             url = reverse(view_name)
-        if volumes := self.request.GET.getlist('volume'):
+        volumes = []
+        if request_volumes := self.request.GET.getlist('volume'):
+            counter, iteration = 0, 300
+            # avoid javascript injection
+            for volume_name in request_volumes:
+                if elfinder_settings.ELFINDER_VOLUME_DRIVERS.get(volume_name):
+                    volumes.append(volume_name)
+                counter += 1
+                # prevents system overload by malicious bot
+                if counter > iteration:
+                    break
             url += "?" + urlencode([("volume", volume) for volume in volumes])
-        return url
+        # it's safe because it's already validated against the variable (ELFINDER_VOLUME_DRIVERS).
+        return mark_safe(url)
 
     connector_url = cached_property(_get_connector_url)
 
