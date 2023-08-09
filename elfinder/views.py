@@ -13,9 +13,41 @@ from elfinder.connector import ElFinderConnector
 from elfinder.volume_drivers import get_volume_driver
 
 
-class VolumeMixin:
+class Volume:
     # Whether to return responses in json (used with the connector).
     json_response = False
+
+    def get_volume_drivers(self, request, **options) -> list:
+        """Returns a list with volumes"""
+        volume_drivers = []
+        options.setdefault('request', request)
+        for volume_name in self._get_volume_alias(request):
+            volume = get_volume_driver(volume_name, **options)
+            volume_drivers.append(volume)
+        return volume_drivers
+
+    @staticmethod
+    def _get_volume_alias(request):
+        return request.GET.getlist('volume', ['default'])
+
+    def _login_test(self, request):
+        """Executing this method indicates that login validation has passed and no authentication is required."""
+        return False
+
+    def get_login_view(self, request, volume):
+        """Checks if volume is project by authentication (redirect to view accordingly)."""
+        decorator = user_passes_test(test_func=volume.login_test_func,
+                                     login_url=volume.login_url)
+        response = decorator(self._login_test)(request)
+        if response:
+            if self.json_response:
+                return JsonResponse({'error': "Login required!"})
+            else:
+                return response
+        return response
+
+
+class VolumeMixin(Volume):
     # Whether to check through the volume if login is required.
     volume_login_check = True
 
@@ -26,34 +58,6 @@ class VolumeMixin:
                 if volume_driver.login_required and (login_view := self.get_login_view(request, volume_driver)):
                     return login_view
         return super().dispatch(request, *args, **kwargs)
-
-    def get_volume_drivers(self, request, **options) -> list:
-        """Returns a list with volumes"""
-        volume_drivers = []
-        options.setdefault('request', request)
-        for volume_name in self.get_volume_names(request):
-            volume = get_volume_driver(volume_name, **options)
-            volume_drivers.append(volume)
-        return volume_drivers
-
-    def get_volume_names(self, request):
-        return request.GET.getlist('volume', ['default'])
-
-    def login_test(self, request):
-        """Executing this method indicates that login validation has passed and no authentication is required."""
-        return False
-
-    def get_login_view(self, request, volume):
-        """Checks if volume is project by authentication (redirect to view accordingly)."""
-        decorator = user_passes_test(test_func=volume.login_test_func,
-                                     login_url=volume.login_url)
-        response = decorator(self.login_test)(request)
-        if response:
-            if self.json_response:
-                return JsonResponse({'error': "Login required!"})
-            else:
-                return response
-        return response
 
 
 class IndexView(VolumeMixin, View):
