@@ -2,6 +2,7 @@
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.module_loading import import_string
+from urllib.parse import urlencode
 
 
 class BaseVolumeDriver(object):
@@ -22,11 +23,12 @@ class BaseVolumeDriver(object):
         """:return url of driver connector"""
         view_name = self.kwargs.get('connector_url_view_name',
                                     'elfinder_connector')
-        collection_id = self.kwargs.get('collection_id')
-        if collection_id:
+        if collection_id := self.kwargs.get('collection_id'):
             url = reverse(view_name, kwargs={'coll_id': collection_id})
         else:
             url = reverse(view_name)
+        if volumes := self.request.GET.getlist('volume'):
+            url += "?" + urlencode([("volume", volume) for volume in volumes])
         return url
 
     connector_url = cached_property(_get_connector_url)
