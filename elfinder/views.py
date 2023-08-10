@@ -23,7 +23,7 @@ class Volume:
         volume_drivers = []
         options.setdefault('request', request)
         iteration = settings.ELFINDER_MAX_VOLUME_INTERATION
-        for counter, volume_name in enumerate(self._get_volume_alias(request)):
+        for counter, volume_name in enumerate(self.get_volume_alias(request)):
             try:
                 volume = get_volume_driver(volume_name, **options)
             except ImproperlyConfigured:
@@ -33,9 +33,8 @@ class Volume:
             volume_drivers.append(volume)
         return volume_drivers
 
-    @staticmethod
-    def _get_volume_alias(request):
-        return request.GET.getlist('volume', ['default'])
+    def get_volume_alias(self, request) -> list:
+        return list(request.GET.getlist('volume', ['default']))
 
     def _login_test(self, request):
         """Executing this method indicates that login validation has passed and no authentication is required."""
