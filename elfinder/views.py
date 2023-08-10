@@ -22,11 +22,14 @@ class Volume:
         """Returns a list with volumes"""
         volume_drivers = []
         options.setdefault('request', request)
-        for volume_name in self._get_volume_alias(request):
+        iteration = settings.ELFINDER_MAX_VOLUME_INTERATION
+        for counter, volume_name in enumerate(self._get_volume_alias(request)):
             try:
                 volume = get_volume_driver(volume_name, **options)
             except ImproperlyConfigured:
                 continue
+            if counter > iteration:
+                break
             volume_drivers.append(volume)
         return volume_drivers
 

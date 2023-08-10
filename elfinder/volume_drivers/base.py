@@ -26,7 +26,7 @@ class BaseVolumeDriver(object):
         l"""
         volumes = set()
         if request_volumes := self.request.GET.getlist('volume'):
-            counter, iteration = 0, 300
+            counter, iteration = 0, elfinder_settings.ELFINDER_MAX_VOLUME_INTERATION
             # avoid javascript injection
             for volume_name in request_volumes:
                 if elfinder_settings.ELFINDER_VOLUME_DRIVERS.get(volume_name):
