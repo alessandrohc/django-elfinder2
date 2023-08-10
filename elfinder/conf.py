@@ -52,5 +52,11 @@ class LazySettings(LazyObject):
             None
         )
 
+        # Maximum number of volumes supported by the 'volume' parameter
+        self.ELFINDER_MAX_VOLUME_INTERATION = getattr(
+            user_settings, "ELFINDER_MAX_VOLUME_INTERATION",
+            300
+        )
+
 
 settings = LazySettings()
