@@ -21,25 +21,33 @@ class BaseVolumeDriver(object):
         """
         raise NotImplementedError
 
+    def _get_volumes(self) -> set:
+        """ Returns a set of volume names for the connector to contro
+        l"""
+        volumes = set()
+        if request_volumes := self.request.GET.getlist('volume'):
+            counter, iteration = 0, 300
+            # avoid javascript injection
+            for volume_name in request_volumes:
+                if elfinder_settings.ELFINDER_VOLUME_DRIVERS.get(volume_name):
+                    volumes.add(volume_name)
+                counter += 1
+                # prevents system overload by malicious bot
+                if counter > iteration:
+                    break
+        return volumes
+
     def _get_connector_url(self):
-        """:return url of driver connector"""
+        """:return url of driver connector
+        """
         view_name = self.kwargs.get('connector_url_view_name',
                                     'elfinder_connector')
         if collection_id := self.kwargs.get('collection_id'):
             url = reverse(view_name, kwargs={'coll_id': collection_id})
         else:
             url = reverse(view_name)
-        volumes = []
-        if request_volumes := self.request.GET.getlist('volume'):
-            counter, iteration = 0, 300
-            # avoid javascript injection
-            for volume_name in request_volumes:
-                if elfinder_settings.ELFINDER_VOLUME_DRIVERS.get(volume_name):
-                    volumes.append(volume_name)
-                counter += 1
-                # prevents system overload by malicious bot
-                if counter > iteration:
-                    break
+
+        if volumes := self._get_volumes():
             url += "?" + urlencode([("volume", volume) for volume in volumes])
         # it's safe because it's already validated against the variable (ELFINDER_VOLUME_DRIVERS).
         return mark_safe(url)
