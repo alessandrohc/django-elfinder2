@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import ImproperlyConfigured
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -22,7 +23,10 @@ class Volume:
         volume_drivers = []
         options.setdefault('request', request)
         for volume_name in self._get_volume_alias(request):
-            volume = get_volume_driver(volume_name, **options)
+            try:
+                volume = get_volume_driver(volume_name, **options)
+            except ImproperlyConfigured:
+                continue
             volume_drivers.append(volume)
         return volume_drivers
 
