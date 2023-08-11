@@ -21,16 +21,17 @@ class BaseVolumeDriver(object):
         """
         raise NotImplementedError
 
-    def _get_volumes(self) -> set:
+    def _get_volumes(self) -> list:
         """ Returns a set of volume names for the connector to contro
         l"""
-        volumes = set()
+        volumes = []
         if request_volumes := self.request.GET.getlist('volume'):
             counter, iteration = 0, elfinder_settings.ELFINDER_MAX_VOLUME_INTERATION
             # avoid javascript injection
             for volume_name in request_volumes:
                 if elfinder_settings.ELFINDER_VOLUME_DRIVERS.get(volume_name):
-                    volumes.add(volume_name)
+                    if volume_name not in volumes:
+                        volumes.append(volume_name)
                 counter += 1
                 # prevents system overload by malicious bot
                 if counter > iteration:
