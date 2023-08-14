@@ -50,7 +50,7 @@ class ElFinderConnector(object):
         return {
             'open': {
                 'method': '__open', 'options': ['target'],
-                'defaults': {'mimes[]': []}
+                'defaults': {'mimes[]': [], 'tree': False}
             },
             'tree': {
                 'method': '__tree', 'options': ['target'],
@@ -348,7 +348,7 @@ class ElFinderConnector(object):
             currently-opened volumes is returned. The root of the first
             volume is considered to be the current directory.
         """
-        if 'tree' in self.data and self.data['tree'] == '1':
+        if kwargs['tree']:
             inc_ancestors = True
             inc_siblings = True
         else:
@@ -370,14 +370,19 @@ class ElFinderConnector(object):
                 volume = self.volumes[volume_id]
                 files.extend(volume.get_tree('', inc_ancestors, inc_siblings, **kwargs))
         else:
-            # A target was specified, so we only need to return info about
-            # that directory.
-            volume = self.get_volume(target)
-            self.response.update(volume.get_options())
-            self.response['cwd'] = volume.get_info(target)
-            self.response['files'] = volume.get_tree(target,
-                                                     inc_ancestors,
-                                                     inc_siblings, **kwargs)
+            # A target was specified, so we only need to return info about that directory.
+            volume_target = self.get_volume(target)
+            self.response.update(volume_target.get_options())
+            self.response['cwd'] = volume_target.get_info(target)
+            self.response['files'] = files = []
+            files.extend(volume_target.get_tree(target,
+                                                inc_ancestors,
+                                                inc_siblings, **kwargs))
+            if kwargs['tree']:
+                for volume in self.volumes.values():
+                    if volume == volume_target:
+                        continue
+                    files.extend(volume.get_tree('', inc_ancestors, inc_siblings, **kwargs))
 
         # If the request includes 'init', add some client initialisation
         # data to the response.
