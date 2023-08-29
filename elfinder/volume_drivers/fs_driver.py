@@ -1,6 +1,8 @@
 # coding: utf-8
 import mimetypes as mimes
 
+import patoolib
+
 import chardet
 import hashlib
 import os
@@ -347,6 +349,28 @@ class FileSystemVolumeDriver(BaseVolumeDriver):
         for item in self.get_tree(target):
             dir_list.append(item['name'])
         return dir_list
+
+    def archive(self, targets, target, name, ttype):
+        """Packs directories / files into an archive."""
+        abs_path = self._find_path(target)
+        type_map = {
+            "application/x-tar": 'tar',
+            "application/zip": 'zip',
+        }
+        added = []
+        zipfile = None
+        if abs_path:
+            zipfile = os.path.join(abs_path, "{}.{}".format(name, type_map[ttype]))
+            files = []
+            for trg in targets:
+                orig_abs_path = self._find_path(trg)
+                files.append(orig_abs_path)
+
+            patoolib.create_archive(zipfile, files)
+        for node in self.get_tree(target):
+            if self._find_path(node['hash']) == zipfile:
+                added.append(node)
+        return added
 
     def paste(self, targets, dest, cut, **kwargs):
         """ Moves/copies target files/directories from source to dest. """

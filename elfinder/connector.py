@@ -444,29 +444,13 @@ class ElFinderConnector(object):
         self.response.update(dest_volume.paste(targets, dest, cut, **kwargs))
 
     def __archive(self):
+        """Packs directories / files into an archive."""
         target = self.data['target']
         targets = self.data['targets[]']
         name = self.data['name']
-        type = self.data['type']
+        ttype = self.data['type']
         source_volume = self.get_volume(target)
-        abs_path = source_volume._find_path(target)
-        type_map = {
-            "application/x-tar": 'tar',
-            "application/zip": 'zip',
-        }
-        added = []
-        zipfile = None
-        if abs_path:
-            zipfile = os.path.join(abs_path, "{}.{}".format(name, type_map[type]))
-            files = []
-            for trg in targets:
-                orig_abs_path = source_volume._find_path(trg)
-                files.append(orig_abs_path)
-
-            patoolib.create_archive(zipfile, files)
-        for node in source_volume.get_tree(target):
-            if source_volume._find_path(node['hash']) == zipfile:
-                added.append(node)
+        added: list = source_volume.archive(targets, target, name, ttype)
         self.response.update({"added": added})
 
     def __extract(self):

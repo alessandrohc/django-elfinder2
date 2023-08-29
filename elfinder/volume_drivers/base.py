@@ -111,6 +111,15 @@ class BaseVolumeDriver(object):
         """
         raise NotImplementedError
 
+    def archive(self, targets, target, name, ttype):
+        """Packs directories / files into an archive.
+        :param name: file name of the archive to create
+        :param ttype: mime-type for the archive
+        :param target: hash of the directory that are added to the archive directories / files
+        :param targets: an array of hashes of the directories / files to archive
+        """
+        raise NotImplementedError
+
     def get_tree(self, target, ancestors=False, siblings=False):
         """ Gets a list of dicts describing children/ancestors/siblings of the
             target.
