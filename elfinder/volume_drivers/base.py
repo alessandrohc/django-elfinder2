@@ -22,8 +22,8 @@ class BaseVolumeDriver(object):
         raise NotImplementedError
 
     def _get_volumes(self) -> list:
-        """ Returns a set of volume names for the connector to contro
-        l"""
+        """ Returns a set of volume names for the connector to control
+        """
         volumes = []
         if request_volumes := self.request.GET.getlist('volume'):
             counter, iteration = 0, elfinder_settings.ELFINDER_MAX_VOLUME_INTERATION
@@ -105,8 +105,8 @@ class BaseVolumeDriver(object):
 
     def zip_download(self, targets, dl=False):
         """ Prepare files for download
-
-            :param targets[]: array of hashed paths of the nodes
+            :param targets: array of hashed paths of the nodes
+            :param dl:
             :returns: dict -- A dict describing the zip file.
         """
         raise NotImplementedError
@@ -123,12 +123,12 @@ class BaseVolumeDriver(object):
         """
         raise NotImplementedError
 
-    def read_file_view(self, request, hash, **kwargs):
+    def read_file_view(self, request, target, **kwargs):
         """ Django view function, used to display files in response to the
             'file' command.
 
             :param request: The original HTTP request.
-            :param hash: The hash of the target file.
+            :param target: The hash of the target file.
             :returns: dict -- a dict describing the new directory.
         """
         raise NotImplementedError
@@ -146,8 +146,8 @@ class BaseVolumeDriver(object):
     def search(self, text, target, reqid):
         """ Search for file/directory
 
-            :param query: search string.
-            :param hash: The hash of the parent directory.
+            :param text: search string.
+            :param target: The hash of the parent directory.
             :param reqid: request session id.
             :returns: mimes
         """
@@ -237,7 +237,7 @@ class BaseVolumeDriver(object):
             The 'rm' command takes a list of targets - this function is called
             for each target, so should only delete one file/directory.
 
-            :param targets: A list of hashes of files/dirs to delete.
+            :param target: A hash of files/dir to delete.
             :returns: list -- warnings generated when trying to remove a file or directory.
         """
         raise NotImplementedError

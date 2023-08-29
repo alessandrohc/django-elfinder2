@@ -263,7 +263,7 @@ class FileSystemVolumeDriver(BaseVolumeDriver):
         path = self._find_path(target)
         return self._get_path_info(path)
 
-    def search(self, text, target):
+    def search(self, text, target, reqid):
         """Search for files"""
         path = self._find_path(target)
         ptext = "|".join([re.escape(v) for v in text.split() if v])
@@ -313,8 +313,8 @@ class FileSystemVolumeDriver(BaseVolumeDriver):
         # print
         return tree
 
-    def read_file_view(self, request, hash):
-        file_path = self._find_path(hash)
+    def read_file_view(self, request, target, **kwargs):
+        file_path = self._find_path(target)
         from django.http import HttpResponse
         resp = HttpResponse(content_type='application/force-download')
         file = FileWrapper(file_path, self.root,
@@ -348,7 +348,7 @@ class FileSystemVolumeDriver(BaseVolumeDriver):
             dir_list.append(item['name'])
         return dir_list
 
-    def paste(self, targets, dest, cut):
+    def paste(self, targets, dest, cut, **kwargs):
         """ Moves/copies target files/directories from source to dest. """
         dest_dir = self._get_path_object(self._find_path(dest))
         added = []
