@@ -372,6 +372,25 @@ class FileSystemVolumeDriver(BaseVolumeDriver):
                 added.append(node)
         return added
 
+    def extract(self, target, makedir=True):
+        """Unpacks an archive."""
+        archive_file = self.get_info(target)
+        archive_file_path = self._find_path(target)
+        archive_name = archive_file_path.split('/')[-1].split('.')[0]
+        folder_path = os.path.join(
+            self._find_path(archive_file.get('phash')),
+            archive_name
+        )
+        if makedir:
+            self.mkdir(archive_name, archive_file.get('phash'))
+        patoolib.extract_archive(archive_file_path, outdir=folder_path,
+                                 interactive=False)
+        added = []
+        for node in self.get_tree(archive_file.get('phash')):
+            if self._find_path(node['hash']) == folder_path:
+                added.append(node)
+        return added
+
     def paste(self, targets, dest, cut, **kwargs):
         """ Moves/copies target files/directories from source to dest. """
         dest_dir = self._get_path_object(self._find_path(dest))

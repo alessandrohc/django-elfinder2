@@ -10,9 +10,7 @@ than being tied to one method of permissions checking.
 
 import collections
 import logging
-import os
 
-import patoolib
 from django.utils.functional import cached_property
 
 logger = logging.getLogger(__name__)
@@ -105,7 +103,7 @@ class ElFinderConnector(object):
                              'bg': None}
             },
             'duplicate': {'method': '__duplicate', 'options': ['targets[]']},
-            'extract': {'method': '__extract', 'options': ['target']},
+            'extract': {'method': '__extract', 'options': ['target'], 'defaults': {'makedir': False}},
             'archive': {'method': '__archive',
                         'options': ['target', 'targets[]', 'name', 'type']},
             'search': {'method': '__search', 'options': ['target', 'q', 'reqid']},
@@ -140,7 +138,7 @@ class ElFinderConnector(object):
                        'dst', 'cut', 'init', 'type', 'width', 'height',
                        'q', 'download', 'suffix', 'overwrite', 'chunk',
                        'mode', 'degree', 'quality', 'bg', 'x', 'y', 'substitute',
-                       'cid', 'range', 'conv', 'cpath']
+                       'cid', 'range', 'conv', 'cpath', 'makedir']
         return http_params + self.allowed_list_command_http_params
 
     @cached_property
@@ -453,23 +451,11 @@ class ElFinderConnector(object):
         added: list = source_volume.archive(targets, target, name, ttype)
         self.response.update({"added": added})
 
-    def __extract(self):
+    def __extract(self, **kwargs):
+        """Unpacks an archive."""
         target = self.data['target']
         source_volume = self.get_volume(target)
-        archive_file = source_volume.get_info(target)
-        archive_file_path = source_volume._find_path(target)
-        archive_name = archive_file_path.split('/')[-1].split('.')[0]
-        folder_path = os.path.join(
-            source_volume._find_path(archive_file.get('phash')),
-            archive_name
-        )
-        self.get_volume(archive_file.get('phash')).mkdir(archive_name, archive_file.get('phash'))
-        patoolib.extract_archive(archive_file_path, outdir=folder_path, interactive=False)
-        added = []
-        for node in source_volume.get_tree(archive_file.get('phash')):
-            if source_volume._find_path(node['hash']) == folder_path:
-                added.append(node)
-
+        added = source_volume.extract(target, **kwargs)
         self.response.update({"added": added})
 
     def __remove(self):
