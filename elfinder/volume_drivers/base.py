@@ -120,6 +120,15 @@ class BaseVolumeDriver(object):
         """
         raise NotImplementedError
 
+    def extract(self, target, makedir=True):
+        """Unpacks an archive.
+        :param target: target hash of the archive file
+         :param makedir: "True" to extract to new directory
+
+         added : (Array) Information about File/Directory of extracted items
+        """
+        raise NotImplementedError
+
     def get_tree(self, target, ancestors=False, siblings=False):
         """ Gets a list of dicts describing children/ancestors/siblings of the
             target.
