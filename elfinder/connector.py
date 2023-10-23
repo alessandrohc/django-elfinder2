@@ -7,8 +7,6 @@ create files in other people's file collections, or delete files they
 do not own. This needs to be implemented in an extendable way, rather
 than being tied to one method of permissions checking.
 """
-
-import collections
 import logging
 
 from django.utils.functional import cached_property
@@ -182,7 +180,7 @@ class ElFinderConnector(object):
             which GET variables must be present or empty for this command.
         """
         func = getattr(self, '_' + self.__class__.__name__ + func_name, None)
-        if not isinstance(func, collections.Callable):
+        if not callable(func):
             self.response['error'] = 'Command failed'
             return
 
