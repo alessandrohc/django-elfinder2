@@ -435,8 +435,10 @@ class ElFinderConnector(object):
         cut = (self.data['cut'] == '1')
         source_volume = self.get_volume(targets[0])
         dest_volume = self.get_volume(dest)
+        # Pass the source volume as an option to the destination volume so that it is
+        # possible to transfer files/directories internally.
         if source_volume != dest_volume:
-            raise Exception('Moving between volumes is not supported.')
+            kwargs['source_volume'] = source_volume
         self.response.update(dest_volume.paste(targets, dest, cut, **kwargs))
 
     def __archive(self):
