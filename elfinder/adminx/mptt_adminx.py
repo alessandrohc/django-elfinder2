@@ -12,11 +12,11 @@ from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError, transaction
 from django.db.models.fields.related import ForeignObjectRel, ManyToManyField
-from django.utils.encoding import force_text
-from django.utils.encoding import smart_text
+from django.utils.encoding import force_str
+from django.utils.encoding import smart_str
 from django.utils.html import format_html, mark_safe
 from django.utils.translation import get_language_bidi
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import gettext as _, gettext_lazy
 from js_asset import JS
 from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm, TreeNodeChoiceField
@@ -78,7 +78,7 @@ class MPTTModelAdmin(object):
                     if self.has_delete_permission(request, obj):
                         obj.delete()
                         n += 1
-                        obj_display = force_text(obj)
+                        obj_display = force_str(obj)
                         self.log_deletion(request, obj, obj_display)
             self.message_user(
                 request,
@@ -140,7 +140,7 @@ class DraggableMPTTAdmin(object):
             item,
         )
 
-    indented_title.short_description = ugettext_lazy('title')
+    indented_title.short_description = gettext_lazy('title')
 
     def changelist_view(self, request, *args, **kwargs):
         if request.is_ajax() and request.POST.get('cmd') == 'move_node':
@@ -327,7 +327,7 @@ class TreeRelatedFieldListFilter(RelatedFieldListFilter):
         }
         for pk_val, val, padding_style in self.lookup_choices:
             yield {
-                'selected': self.lookup_val == smart_text(pk_val),
+                'selected': self.lookup_val == smart_str(pk_val),
                 'query_string': cl.get_query_string({
                     self.lookup_kwarg: pk_val,
                 }, [self.lookup_kwarg_isnull]),
