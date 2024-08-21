@@ -8,7 +8,7 @@ do not own. This needs to be implemented in an extendable way, rather
 than being tied to one method of permissions checking.
 """
 import logging
-
+from elfinder.conf import settings as app_settings
 from django.utils.functional import cached_property
 
 logger = logging.getLogger(__name__)
@@ -117,7 +117,11 @@ class ElFinderConnector(object):
             The returned dict will be merged with response during the __open
             command.
         """
-        return {'api': "%.1F%03d" % (self._api_version, self._api_revision)}
+        return {
+            'api': "%.1F%03d" % (self._api_version, self._api_revision),
+            'uplMaxFile': app_settings.ELFINDER_UPLOAD_MAX_FILE,
+            'uplMaxSize': app_settings.ELFINDER_UPLOAD_REQUEST_MAX_SIZE
+        }
 
     def get_allowed_lcommand_http_params(self):
         return ["targets[]", "dirs[]", "upload_path[]",
