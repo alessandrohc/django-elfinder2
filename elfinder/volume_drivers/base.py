@@ -215,7 +215,7 @@ class BaseVolumeDriver(object):
         basedir_name_filecopy+serialnumber.extension (if any)
         """
 
-    def list(self, target):
+    def list(self, target, **kwargs):
         """ Lists the contents of a directory.
 
             :param target: The hash of the target directory.

@@ -67,7 +67,9 @@ class ElFinderConnector(object):
             'put': {'method': '__putfile', 'options': ['target', 'content'],
                     'defaults': {'encoding': None}},
             'rename': {'method': '__rename', 'options': ['target', 'name']},
-            'ls': {'method': '__list', 'options': ['target']},
+            'ls': {'method': '__list',
+                   'options': ['target', 'intersect[]'],
+                   'defaults': {'intersect[]': []}},
             'paste': {'method': '__paste',
                       'options': ['targets[]', 'dst', 'cut'],
                       'defaults': {'renames[]': [], 'reqid': None, 'suffix': '~'}},
@@ -125,7 +127,7 @@ class ElFinderConnector(object):
 
     def get_allowed_lcommand_http_params(self):
         return ["targets[]", "dirs[]", "upload_path[]",
-                "renames[]", "upload[]",
+                "renames[]", "upload[]", "intersect[]",
                 "mimes[]"]
 
     @cached_property
@@ -428,10 +430,10 @@ class ElFinderConnector(object):
         volume = self.get_volume(target)
         self.response.update(volume.rename(self.data['name'], target))
 
-    def __list(self):
+    def __list(self, **kwargs):
         target = self.data['target']
         volume = self.get_volume(target)
-        self.response['list'] = volume.list(target)
+        self.response['list'] = volume.list(target, **kwargs)
 
     def __paste(self, **kwargs):
         targets = self.data['targets[]']
