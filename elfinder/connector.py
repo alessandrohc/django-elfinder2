@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class ElFinderConnector(object):
     _api_version = 2.1
-    _api_revision = 61
+    _api_revision = 64
 
     def __init__(self, volumes=None):
         if volumes is None:
