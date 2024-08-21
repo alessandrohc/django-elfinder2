@@ -344,7 +344,7 @@ class FileSystemVolumeDriver(BaseVolumeDriver):
             "removed": [target],
         }
 
-    def list(self, target):
+    def list(self, target, **kwargs):
         dir_list = []
         for item in self.get_tree(target):
             dir_list.append(item['name'])

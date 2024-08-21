@@ -151,7 +151,7 @@ class ModelVolumeDriver(BaseVolumeDriver):
         return {'added': [object.get_info()],
                 'removed': [target]}
 
-    def list(self, target):
+    def list(self, target, **kwargs):
         """ Returns a list of files/directories in the target directory. """
         items = []
         for object in self.get_tree(target):
