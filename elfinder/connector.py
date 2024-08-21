@@ -362,7 +362,7 @@ class ElFinderConnector(object):
             # opened volumes.
             # Assume the first volume's root is the currently open directory.
             volume = next(iter(self.volumes.values()))
-            self.response.update(volume.get_options())
+            self.response['options'] = volume.get_options()
             self.response['cwd'] = volume.get_info('')
             self.response['files'] = files = []
             # Add relevant tree information for each volume
@@ -372,7 +372,7 @@ class ElFinderConnector(object):
         else:
             # A target was specified, so we only need to return info about that directory.
             volume_target = self.get_volume(target)
-            self.response.update(volume_target.get_options())
+            self.response['options'] = volume_target.get_options()
             self.response['cwd'] = volume_target.get_info(target)
             self.response['files'] = files = []
             files.extend(volume_target.get_tree(target,
