@@ -5,6 +5,7 @@ from django.utils.module_loading import import_string
 from urllib.parse import urlencode
 from elfinder.conf import settings as elfinder_settings
 from django.utils.safestring import mark_safe
+from elfinder.utils import get_bytes
 
 
 class BaseVolumeDriver(object):
@@ -87,6 +88,8 @@ class BaseVolumeDriver(object):
             'uploadMaxSize': 0
         }
         options.update(api_options)
+        # unit convert
+        options['uploadMaxSize'] = get_bytes(options['uploadMaxSize'])
         return options
 
     def get_index_template(self, template):
