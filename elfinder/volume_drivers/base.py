@@ -77,15 +77,16 @@ class BaseVolumeDriver(object):
             func = self._login_test
         return func
 
-    def get_options(self):
+    def get_options(self, path=None):
         """Volume config defaults"""
+        api_options = self.kwargs.get('js_api_options', {})
         options = {
-            'uplMaxSize': '128M',
-            'options': {'separator': '/',
-                        'disabled': [],
-                        'copyOverwrite': 1}
+            'separator': '/',
+            'disabled': [],
+            'copyOverwrite': True,
+            'uploadMaxSize': 0
         }
-        options.update(self.kwargs.get('js_api_options', {}))
+        options.update(api_options)
         return options
 
     def get_index_template(self, template):
