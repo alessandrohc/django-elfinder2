@@ -58,13 +58,13 @@ class LazySettings(LazyObject):
             300
         )
 
-        # (Number) Allowed upload max number of file per request. For example 20
+        # uplMaxFile (Number) Allowed upload max number of file per request. For example 20
         settings.ELFINDER_UPLOAD_MAX_FILE = getattr(
             user_settings, "ELFINDER_UPLOAD_MAX_FILE",
             20
         )
 
-        # (String) Allowed upload max size per request. For example "32M"
+        # uplMaxSize (String) Allowed upload max size per request. For example "32M"
         settings.ELFINDER_UPLOAD_REQUEST_MAX_SIZE = getattr(
             user_settings, "ELFINDER_UPLOAD_REQUEST_MAX_SIZE",
             '32M'
