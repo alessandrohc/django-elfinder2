@@ -1,4 +1,5 @@
 # coding=utf-8
+import copy
 import re
 
 from django.urls import reverse
@@ -26,8 +27,17 @@ class BaseVolumeDriver(object):
 
     opt_upload_maxsize = 0  # uploadMaxSize
 
+    # Mimetypes allowed to upload
+    opt_upload_allow = ()  # uploadAllow
+
+    # Mimetypes not allowed to upload. Same values accepted as in uploadAllow
+    opt_upload_deny = ()  # uploadDeny
+
     # Mimetypes allowed to display
     opt_only_mimes = ()
+
+    #  Order to validate uploadAllow and uploadDeny
+    opt_upload_order = ('deny', 'allow')
 
     def __init__(self, request=None, *args, **kwargs):
         self.args = args
@@ -98,13 +108,19 @@ class BaseVolumeDriver(object):
 
     def get_options(self, path=None):
         """Volume config defaults"""
-        js_options = self.kwargs.get('js_api_options', {})
+        js_options = copy.deepcopy(self.kwargs.get('js_api_options', {}))
         opts = {
             'disabled': self.opt_disabled,
             'separator': self.opt_separator,
             'copyOverwrite': self.opt_copy_overwrite,
             'uploadMaxSize': self.opt_upload_maxsize,
+            'uploadMime': {
+                'firstOrder': self.opt_upload_order[0] if self.opt_upload_order else 'deny',
+                'allow': self.opt_upload_allow,
+                'deny': self.opt_upload_deny
+            }
         }
+        opts['uploadMime'].update(js_options.pop('uploadMime', {}))
         opts.update(js_options)
         # unit convert
         opts['uploadMaxSize'] = get_bytes(opts['uploadMaxSize'])
@@ -126,7 +142,7 @@ class BaseVolumeDriver(object):
         mimes = mimes if mimes else self.opt_only_mimes
         if mimes:
             mime_prefix = re.compile("^" + re.escape(mime.split('/')[0]), re.I)
-            return (
+            return bool(
                 mime == 'directory'
                 or 'all' in mimes
                 or 'All' in mimes
@@ -135,6 +151,35 @@ class BaseVolumeDriver(object):
             )
         else:
             return empty
+
+    def allow_put_mime(self, mime):
+        """
+        Return true if the file MIME type can be saved based on the uploadOrder configuration.
+
+        :param mime: MIME type to check
+        :return: bool
+        """
+        opts = self.get_options()
+        upload_mime = opts['uploadMime']
+        upload_order = upload_mime['firstOrder']
+        allow_mimetypes = upload_mime.get('allow', ())
+        deny_mimetypes = upload_mime.get('deny', ())
+
+        # Logic based on http://httpd.apache.org/docs/2.2/mod/mod_authz_host.html#order
+        allow = self.mime_accepted(mime, allow_mimetypes, None)
+        deny = self.mime_accepted(mime, deny_mimetypes, None)
+
+        if upload_order.lower() == 'allow':  # ('allow', 'deny') default is 'deny'
+            res = False  # default is deny
+            if not deny and allow is True:  # match only allow
+                res = True
+            # else: (both match | no match | match only deny) { deny }
+        else:  # ('deny', 'allow'), default is 'allow' - this is the default rule
+            res = True  # default is allow
+            if not allow and deny is True:  # match only deny
+                res = False
+            # else: (both match | no match | match only allow) { allow }
+        return res
 
     def get_index_template(self, template):
         """Template that render the index view."""
