@@ -105,6 +105,10 @@ class BaseVolumeDriver(object):
         opts['uploadMaxSize'] = get_bytes(opts['uploadMaxSize'])
         return opts
 
+    def command_disabled(self, command, path=None):
+        """Checks if the command is in the list of disabled commands."""
+        return command in self.get_options(path=path)['disabled']
+
     def get_index_template(self, template):
         """Template that render the index view."""
         return self.kwargs.get('index_template', template)
