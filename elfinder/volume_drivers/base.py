@@ -10,6 +10,19 @@ from elfinder.utils import get_bytes
 
 class BaseVolumeDriver(object):
     content_encoding = 'UTF-8'
+    # https://github.com/Studio-42/elFinder/wiki/Connector-configuration-options-2.1#root-options
+
+    # List of disabled client's commands
+    opt_disabled = []  # disabled
+
+    # Directory separator - required by client
+    opt_separator = '/'  # separator
+
+    # on paste file -  if true - old file will be replaced with new one,
+    # if false new file get name - original_name-number.ext
+    opt_copy_overwrite = True  # copyOverwrite
+
+    opt_upload_maxsize = 0  # uploadMaxSize
 
     def __init__(self, request=None, *args, **kwargs):
         self.args = args
@@ -80,17 +93,17 @@ class BaseVolumeDriver(object):
 
     def get_options(self, path=None):
         """Volume config defaults"""
-        api_options = self.kwargs.get('js_api_options', {})
-        options = {
-            'separator': '/',
-            'disabled': [],
-            'copyOverwrite': True,
-            'uploadMaxSize': 0
+        js_options = self.kwargs.get('js_api_options', {})
+        opts = {
+            'disabled': self.opt_disabled,
+            'separator': self.opt_separator,
+            'copyOverwrite': self.opt_copy_overwrite,
+            'uploadMaxSize': self.opt_upload_maxsize,
         }
-        options.update(api_options)
+        opts.update(js_options)
         # unit convert
-        options['uploadMaxSize'] = get_bytes(options['uploadMaxSize'])
-        return options
+        opts['uploadMaxSize'] = get_bytes(opts['uploadMaxSize'])
+        return opts
 
     def get_index_template(self, template):
         """Template that render the index view."""
