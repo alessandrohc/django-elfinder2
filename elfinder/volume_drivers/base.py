@@ -43,6 +43,7 @@ class BaseVolumeDriver(object):
         self.args = args
         self.kwargs = kwargs
         self.request = request
+        self._cache = {}
 
     def get_volume_id(self):
         """ Returns the volume ID for the volume, which is used as a prefix
@@ -108,6 +109,8 @@ class BaseVolumeDriver(object):
 
     def get_options(self, path=None):
         """Volume config defaults"""
+        if opts := self._cache.get(path):
+            return opts
         js_options = copy.deepcopy(self.kwargs.get('js_api_options', {}))
         opts = {
             'disabled': self.opt_disabled,
@@ -124,6 +127,7 @@ class BaseVolumeDriver(object):
         opts.update(js_options)
         # unit convert
         opts['uploadMaxSize'] = get_bytes(opts['uploadMaxSize'])
+        self._cache[path] = opts
         return opts
 
     def command_disabled(self, command, path=None):
