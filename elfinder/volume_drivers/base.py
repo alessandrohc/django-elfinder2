@@ -1,4 +1,6 @@
 # coding=utf-8
+import re
+
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.module_loading import import_string
@@ -23,6 +25,9 @@ class BaseVolumeDriver(object):
     opt_copy_overwrite = True  # copyOverwrite
 
     opt_upload_maxsize = 0  # uploadMaxSize
+
+    # Mimetypes allowed to display
+    opt_only_mimes = ()
 
     def __init__(self, request=None, *args, **kwargs):
         self.args = args
@@ -108,6 +113,28 @@ class BaseVolumeDriver(object):
     def command_disabled(self, command, path=None):
         """Checks if the command is in the list of disabled commands."""
         return command in self.get_options(path=path)['disabled']
+
+    def mime_accepted(self, mime, mimes: list = None, empty=True) -> bool:
+        """
+        Return true if mime is in the required mimes list
+
+        :param mime: Mime type to check
+        :param mimes: Allowed mime types list or None to use client mimes list
+        :param empty: What to return on empty list
+        :return: bool or None
+        """
+        mimes = mimes if mimes else self.opt_only_mimes
+        if mimes:
+            mime_prefix = re.compile("^" + re.escape(mime.split('/')[0]), re.I)
+            return (
+                mime == 'directory'
+                or 'all' in mimes
+                or 'All' in mimes
+                or mime in mimes
+                or any([mime_prefix.match(mime_type) for mime_type in mimes])
+            )
+        else:
+            return empty
 
     def get_index_template(self, template):
         """Template that render the index view."""
