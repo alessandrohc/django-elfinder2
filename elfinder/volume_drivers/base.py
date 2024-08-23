@@ -145,13 +145,12 @@ class BaseVolumeDriver(object):
         """
         mimes = mimes if mimes else self.opt_only_mimes
         if mimes:
-            mime_prefix = re.compile("^" + re.escape(mime.split('/')[0]), re.I)
             return bool(
                 mime == 'directory'
                 or 'all' in mimes
                 or 'All' in mimes
                 or mime in mimes
-                or any([mime_prefix.match(mime_type) for mime_type in mimes])
+                or any([re.match(rf"^{re.escape(mime_type)}$", mime, re.I) for mime_type in mimes])
             )
         else:
             return empty
