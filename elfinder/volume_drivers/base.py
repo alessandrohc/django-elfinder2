@@ -150,7 +150,7 @@ class BaseVolumeDriver(object):
                 or 'all' in mimes
                 or 'All' in mimes
                 or mime in mimes
-                or any([re.match(rf"^{re.escape(mime_type)}$", mime, re.I) for mime_type in mimes])
+                or any([re.match(rf"^{re.escape(mime_type)}(/.+)?$", mime, re.I) for mime_type in mimes])
             )
         else:
             return empty
