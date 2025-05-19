@@ -68,7 +68,7 @@ class ElFinderConnector(object):
                     'defaults': {'encoding': None}},
             'rename': {'method': '__rename', 'options': ['target', 'name']},
             'ls': {'method': '__list',
-                   'options': ['target', 'intersect[]'],
+                   'options': ['target'],
                    'defaults': {'intersect[]': []}},
             'paste': {'method': '__paste',
                       'options': ['targets[]', 'dst', 'cut'],
